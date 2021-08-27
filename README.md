@@ -42,11 +42,11 @@ Reset (button)
 
 ## DateBase
 
-data.sqlite this is a database file which contains:
-	all the values for the carbon output per kWh for specific countries
-	all the values for carbon output per km for specific vehicles
-	the start date
-	the score
-	the total carbon output
-	the log of previous actions
+data.sqlite this is a database file which contains
+	all the values for the carbon output per kWh for specific countries,
+	all the values for carbon output per km for specific vehicles,
+	the start date,
+	the score,
+	the total carbon output and 
+	the log of all actions
 this data is all accessed in the python script using sqlite3 with commands in SQL
