@@ -110,7 +110,7 @@ def reset():
     conn.commit()
     numOfDays()
     score_calc()
-    count_setup()
+    count_setup(0)
 
 
 
@@ -222,7 +222,7 @@ score_calc()
 
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------
-def count_setup():
+def count_setup(var):
     def select(select_count):
         global country
         country=(select_count.get())
@@ -234,17 +234,21 @@ def count_setup():
     startup.get_themes()
     startup.set_theme('equilux')
     startup.config(bg='#464646')
-    startup.geometry('250x200')
+    startup.geometry('300x250')
     country_nams=['Australia', 'Brazil', 'Canda', 'China', 'Denmark', 'Germany', 'India', 'Ireland', 'Japan', 'Kenya', 'Mexico', 'Nigeria', 'Russia', 'Rwanda', 'South Africa', 'South Korea', 'Spain', 'Uganda', 'Ukraine', 'United Kingdom', 'United States']
 
     clicked= StringVar()
     clicked.set(country_nams[0])
+    l1 = ttk.Label(startup, text='SELECT COUNTRY', font=50)
+    l1.grid(row=0, column=0, columnspan=2)
     select_count= ttk.Combobox(startup, value=country_nams)
-    select_count.grid(row=0, column=0)
+    select_count.grid(row=1, column=0, pady=10, padx=10)
     select_count.current(0)
-
-    enter=ttk.Button(startup, text="Enter", command=lambda:[select(select_count),startup.destroy(),openMainWindow()])
-    enter.grid(row=0, column=1)
+    if var==1:
+        enter=ttk.Button(startup, text="Enter", command=lambda:[select(select_count),startup.destroy()])
+    else:
+        enter = ttk.Button(startup, text="Enter",command=lambda: [select(select_count), startup.destroy(), openMainWindow()])
+    enter.grid(row=1, column=1, pady=10, padx=10)
 
     startup.mainloop()
 
@@ -263,7 +267,7 @@ c.execute("""SELECT Country
         FROM Total """)
 tempval=c.fetchall()[0][0]
 if str(tempval)=='0':
-    count_setup()
+    count_setup(1)
 
 #---------------------------------------------------------------------------------------------------------------------------
 
@@ -307,23 +311,29 @@ def openMainWindow():
     mainWindow.attributes('-topmost', True)
     mainWindow.title('Footprint')
     mainWindow.config(bg='#464646')
-    mainWindow.geometry('775x600')
+    mainWindow.geometry('800x450')
+    l1 = ttk.Label(mainWindow, text='HOME', font=50)
+    l1.grid(row=0, pady=10)
     button = ttk.Button(mainWindow, text='New Trip', command=lambda:[openTripWindow(), mainWindow.destroy()])
-    button.grid(row=0, column=0, padx=300, pady=25, columnspan=2)
-    button = ttk.Button(mainWindow, text='New Appliance', command=lambda:[openApplianceWindow(), mainWindow.destroy()])
-    button.grid(row=1, column=0, padx=25, pady=25, columnspan=2)
-    l1 = ttk.Label(mainWindow, text='Total Carbon Emissions: '+str(round(float(totall),3)))
-    l1.grid(row=2, column=0, padx=325, pady=25)
+    button.grid(row=1, column=0, padx=300, pady=10, columnspan=2)
+    button = ttk.Button(mainWindow, text='Use Appliance', command=lambda:[openApplianceWindow(), mainWindow.destroy()])
+    button.grid(row=2, column=0, padx=25, pady=10, columnspan=2)
+    l1 = ttk.Label(mainWindow, text='Total Carbon Emissions (g): '+str(round(float(totall),3)))
+    l1.grid(row=3, column=0, padx=325)
     l1 = ttk.Label(mainWindow, text='Score: '+str(round(float(score),3)))
-    l1.grid(row=3, column=0, padx=325, pady=25)
-    l1 = ttk.Label(mainWindow, text='days since initial use: '+str(int(float(day_num)-1)))
-    l1.grid(row=4, column=0, padx=325, pady=25)
-    button = ttk.Button(mainWindow, text='Reset', command=lambda:[mainWindow.destroy(),reset()])
-    button.grid(row=5, column=0, padx=25, pady=25, columnspan=2)
-    button = ttk.Button(mainWindow, text='Log', command=lambda: [openLogWindow(), mainWindow.destroy()])
-    button.grid(row=6, column=0, padx=25, pady=25, columnspan=2)
+    l1.grid(row=4, column=0, padx=325)
+    l1 = ttk.Label(mainWindow, text='Days since initial use: '+str(int(float(day_num)-1)))
+    l1.grid(row=5, column=0, padx=325)
+    button = ttk.Button(mainWindow, text='History', command=lambda: [mainWindow.destroy(),openLogWindow()])
+    button.grid(row=6, column=0, padx=25, pady=10, columnspan=2)
     button = ttk.Button(mainWindow, text='Recycling and Environmentalism', command=lambda:[openRecyclingWindow(), mainWindow.destroy()])
-    button.grid(row=7, column=0, padx=25, pady=25, columnspan=2)
+    button.grid(row=7, column=0, padx=25, pady=10, columnspan=2)
+    button = ttk.Button(mainWindow, text='Change Country', command=lambda: [ mainWindow.destroy(),count_setup(0)])
+    button.grid(row=8, column=0, padx=25, pady=10, columnspan=2)
+    l1 = ttk.Label(mainWindow, text='Country: ' +str(country))
+    l1.grid(row=9, column=0, padx=325)
+    button = ttk.Button(mainWindow, text='Reset', command=lambda:[mainWindow.destroy(),reset()])
+    button.grid(row=10, column=0, padx=25, pady=25, columnspan=2)
 
 def openTripWindow():
     global cmb
@@ -332,87 +342,91 @@ def openTripWindow():
     tripWindow.attributes('-topmost', True)
     tripWindow.title('New Trip')
     tripWindow.config(bg='#464646')
-    tripWindow.geometry('700x500')
+    tripWindow.geometry('800x450')
+    l1 = ttk.Label(tripWindow, text='TRIP', font=50)
+    l1.grid(row=0, pady=10)
     #Combobox
     vehicle=['Taxi', 'Classic Bus', 'Eco Bus', 'Coach', 'National Train', 'Light Rail', 'Subway', 'Ferry On Foot', 'Ferry In Car', 'Small Diesel Car', 'Medium Diesel Car', 'Large Diesel Car', 'MediumHybrid Car', 'Large Hybrid Car', 'Medium LPG Car', 'LargeLPG Car', 'Medium CNG Car', 'Large CNG Car', 'Small Petrol Van', 'Large Petrol Van', 'Small Dielsel Van', 'Medium Dielsel Van', 'Large Dielsel Van', 'LPG Van', 'CNG Van', 'Small Petrol Car', 'Medium Petrol Car', 'Large Petrol Car']
     l1 = ttk.Label(tripWindow, text='Select mode of transport:')
-    l1.grid(row=0, column=0, padx=325, pady=25)
+    l1.grid(row=1, column=0, padx=325, pady=25)
     cmb = AutocompleteCombobox(tripWindow, completevalues=vehicle, width=20)
-    cmb.grid(row=1, column=0, columnspan=2)
+    cmb.grid(row=2, column=0, columnspan=2)
     cmb.current (0)
     #distance slider
     l1 = ttk.Label(tripWindow, text='Distance (Km):')
-    l1.grid(row=2, column=0, pady=25)
+    l1.grid(row=3, column=0, pady=25)
     durationslider = Scale(tripWindow, from_=0, to=120, length=500, sliderrelief='flat', highlightthickness=0, background='#464646', fg='#a6a6a6', troughcolor='#a6a6a6', activebackground='#414141', orient=HORIZONTAL)
-    durationslider.grid(row=3, column=0)
+    durationslider.grid(row=4, column=0)
     #end action
     button = ttk.Button(tripWindow, text='Add Journey', command=lambda:[getTrip(), openMainWindow(), tripWindow.destroy()])
-    button.grid(row=4, column=0, pady=25, columnspan=2)
+    button.grid(row=5, column=0, pady=25, columnspan=2)
 
 def openApplianceWindow():
     global cmb1
     global durationslider1
     applianceWindow = Toplevel(root)
     applianceWindow.attributes('-topmost', True)
-    applianceWindow.title('New Trip')
+    applianceWindow.title('Use Appliance')
     applianceWindow.config(bg='#464646')
-    applianceWindow.geometry('700x500')
+    applianceWindow.geometry('800x450')
+    l1 = ttk.Label(applianceWindow, text='APPLIANCE', font=50)
+    l1.grid(row=0, pady=10)
     appliance = ['Blender', 'Computer', 'Dishwasher', 'Hair dryer', 'Iron', 'Lamp', 'Micro Wave', 'Printer', 'Refrigerator', 'RiceCooker', 'Toaster', 'Tv', 'Washing Machine', 'Water Heater']
     l1 = ttk.Label(applianceWindow, text='Select appliance:')
-    l1.grid(row=0, column=0, padx=325, pady=25)
+    l1.grid(row=1, column=0, padx=325, pady=25)
     cmb1 = AutocompleteCombobox(applianceWindow, completevalues=appliance, width=20)
-    cmb1.grid(row=1, column=0)
+    cmb1.grid(row=2, column=0)
     cmb1.current(0)
     l1 = ttk.Label(applianceWindow, text='Duration (minutes):')
-    l1.grid(row=2, column=0, pady=25)
+    l1.grid(row=3, column=0, pady=25)
     durationslider1 = Scale(applianceWindow, from_=0, to=120, length=500, sliderrelief='flat', highlightthickness=0, background='#464646', fg='#a6a6a6', troughcolor='#a6a6a6', activebackground='#414141', orient=HORIZONTAL)
-    durationslider1.grid(row=3, column=0)
+    durationslider1.grid(row=4, column=0)
     button = ttk.Button(applianceWindow, text='add appliance', command=lambda:[getApp(),openMainWindow(), applianceWindow.destroy()])
-    button.grid(row=4, column=0, pady=25)
+    button.grid(row=5, column=0, pady=25)
 
 def openLogWindow():
     global prev_app
     logWindow = Toplevel(root)
     logWindow.attributes('-topmost', True)
-    logWindow.title('Log')
+    logWindow.title('History')
     logWindow.config(bg='#464646')
-    logWindow.geometry('700x500')
-    l1 = ttk.Label(logWindow, text='Log:')
-    l1.grid(row=0, column=0, padx=300)
+    logWindow.geometry('800x450')
+    l1 = ttk.Label(logWindow, text='HISTORY', font=50)
+    l1.grid(row=0, pady=10, padx=325)
     for i in range(len(prev_app)):
         l1 = ttk.Label(logWindow, text=str(prev_app[i]))
-        l1.grid(row=(i+1), column=0, padx=30)
+        l1.grid(row=(i+1), column=0, padx=150)
     button = ttk.Button(logWindow, text='Home', command=lambda:[openMainWindow(), logWindow.destroy()])
-    button.grid(row=0, column=0, sticky='w')
+    button.grid(row=0, column=0, padx=10, sticky='w')
 
 def openRecyclingWindow():
     recyclingWindow = Toplevel(root)
     recyclingWindow.attributes('-topmost', True)
     recyclingWindow.title('Recycling')
     recyclingWindow.config(bg='#464646')
-    recyclingWindow.geometry('700x500')
-    l1 = ttk.Label(recyclingWindow, text='Ways You Can Recycle')
-    l1.grid(row=0, column=0, padx=300, pady=25)
+    recyclingWindow.geometry('800x450')
+    l1 = ttk.Label(recyclingWindow, text='HOME', font=50)
+    l1.grid(row=0, pady=10)
     l1 = ttk.Label(recyclingWindow, text='1. Reduce paper waste by using recycled paper and printing on both sides.')
-    l1.grid(row=1, column=0)
+    l1.grid(row=1, column=0, pady=5)
     button = ttk.Button(recyclingWindow, text='Buy recycled paper from PaperMill', command=openweb1)
-    button.grid(row=2, column=0)
+    button.grid(row=2, column=0, pady=5)
     l1 = ttk.Label(recyclingWindow, text='2. Recycle old technology.')
-    l1.grid(row=3, column=0)
+    l1.grid(row=3, column=0, pady=5)
     button = ttk.Button(recyclingWindow, text='Find e-waste recyclers near you', command=openweb2)
-    button.grid(row=4, column=0)
+    button.grid(row=4, column=0, pady=5)
     l1 = ttk.Label(recyclingWindow, text='3. Have recycling bins at home.')
-    l1.grid(row=5, column=0)
+    l1.grid(row=5, column=0, pady=5)
     l1 = ttk.Label(recyclingWindow, text='4. Use reusable shopping bags, water bottles, containers, etc.')
-    l1.grid(row=6, column=0)
+    l1.grid(row=6, column=0, pady=5)
     l1 = ttk.Label(recyclingWindow, text='5. Buy in bulk to reduce packaging waste and cost.')
-    l1.grid(row=7, column=0)
+    l1.grid(row=7, column=0, pady=5)
     l1 = ttk.Label(recyclingWindow, text='6. Go digital. Use emails instead of paper mail, and share files online instead of printing them.')
-    l1.grid(row=8, column=0)
+    l1.grid(row=8, column=0, pady=5, padx=175)
     l1 = ttk.Label(recyclingWindow, text='7. Be well informed about environmental issues.')
-    l1.grid(row=9, column=0)
+    l1.grid(row=9, column=0, pady=5)
     button = ttk.Button(recyclingWindow, text='Go to BBC Environmental', command=openweb3)
-    button.grid(row=10, column=0)
+    button.grid(row=10, column=0, pady=5)
     button = ttk.Button(recyclingWindow, text='Home', command=lambda:[openMainWindow(), recyclingWindow.destroy()])
     button.grid(row=11, column=0, pady=25)
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
