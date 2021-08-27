@@ -40,7 +40,7 @@ Country (text)
 Reset (button)
 	reinitialises the database of the app and resets start date, total emissions, and log
 
-##DateBase
+## DateBase
 
 data.sqlite this is a database file which contains:
 	all the values for the carbon output per kWh for specific countries
